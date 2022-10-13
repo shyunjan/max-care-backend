@@ -1,4 +1,3 @@
-import { Inject } from '@nestjs/common';
 import { FastifyInstance, RouteOptions, preValidationHookHandler } from 'fastify';
 import { verifyAccessToken } from '../auth/auth.service';
 
@@ -19,9 +18,16 @@ export default function addFastifyHook(server: FastifyInstance): FastifyInstance
     if (checkLoginAuthUrl.some((u) => url.includes(u))) {
       preValidationHooker.push(async (request, reply, done) => {
         console.log('Hooking preValidation for Login Authorization...');
-        console.log(request.cookies['acc']);
-        const user = await verifyAccessToken(request.cookies['acc']);
-        console.log(user);
+        const accessToken = request.cookies['acc'];
+        if (accessToken) {
+          const loginInfo = await verifyAccessToken(request.cookies['acc']);
+          console.log(loginInfo);
+
+          // ctx.state.loginInfo = loginInfo;
+          // ctx.state.isLoggedIn = true;
+          // ctx.state.isAdmin = loginInfo.mbType === MEMBER.TYPE.ADMIN;
+        } else throw new Error('No access token');
+
         done();
       });
       if (checkAdminAuthUrl.some((u) => url.includes(u))) {

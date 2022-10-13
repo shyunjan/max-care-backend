@@ -30,19 +30,18 @@ export function login(loginData: LoginMemberDto): string {
 
 export async function createAccessToken(member: MemberDto, ttl = ACCESS_TOKEN_TTL) {
   // logger.info(`createAccessToken(${member.mbEmail})`);
-  const payload = { id: member.loginId, email: member.email, userLevel: member.userLevel };
+  const payload = { loginId: member.loginId, email: member.email, userLevel: member.userLevel };
   const secret = createAccessTokenSecret(member.loginId);
   return createJwt(payload, secret, ttl);
 }
 
 function createAccessTokenSecret(loginId: string) {
-  console.log('ACCESS_TOKEN_SECRET = ', ACCESS_TOKEN_SECRET);
   return createHash(`${loginId}${ACCESS_TOKEN_SECRET}`);
 }
 
 export function verifyAccessToken(accessToken: string): Promise<ILoginInfo> {
   const payload = decodeJwt(accessToken) as ILoginInfo;
-  const secret = createAccessTokenSecret(payload.email);
+  const secret = createAccessTokenSecret(payload.loginId);
   return verifyJwt(accessToken, secret) as Promise<ILoginInfo>;
 }
 

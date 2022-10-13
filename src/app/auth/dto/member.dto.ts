@@ -1,5 +1,5 @@
 import { IsDefined, IsOptional, IsEmail, IsInt, Min, Max, IsNotEmpty, Length, Allow, IsEnum, IsBoolean } from 'class-validator';
-import { Sex } from 'src/types';
+import { Sex, UserLevel } from 'src/types';
 
 export class MemberDto {
   @IsDefined() // skipUndefinedProperties나 skipMissingProperties의 영향을 받지 않도록 한다
@@ -27,8 +27,8 @@ export class MemberDto {
    * 9900~10000: 시스템 관리자(administrator)
    **/
   @Min(0)
-  @Max(10000)
-  userLevel: number = 0;
+  @Max(9999)
+  userLevel: UserLevel = UserLevel.tester;
 
   // @IsOptional()
   @IsInt()

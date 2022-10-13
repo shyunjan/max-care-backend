@@ -1,0 +1,51 @@
+{
+  "name": "itech-market-shop-backend",
+  "version": "0.0.1",
+  "description": "ITECH second-hand market shop backend",
+  "main": "src/main.ts",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "start": "npm run start:ts-node:dev",
+    "start:ts-node:local": "nodemon -e \"ts js\" -r tsconfig-paths/register src/main.ts local",
+    "start:ts-node:dev": "nodemon -e \"ts js\" -r tsconfig-paths/register src/main.ts dev",
+    "start:nest-build:local": "rimraf dist && nest build && nodemon -e \"ts js\" dist/main.js local",
+    "start:nest": "nest start --watch",
+    "start:nest-debug": "nest start --debug --watch",
+    "build": "npm run build:nest",
+    "build:tsc": "rimraf dist && tsc",
+    "build:nest": "rimraf dist && nest build",
+    "test": "NODE_ENV=test jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itech-team/itech-market-shop-backend.git"
+  },
+  "author": "Shin HyunJae",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itech-team/itech-market-shop-backend/issues"
+  },
+  "homepage": "https://github.com/itech-team/itech-market-shop-backend#readme",
+  "devDependencies": {
+    "@nestjs/cli": "^9.1.4",
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/node": "file:../../../../usr/local/lib/node_modules/@types/node",
+    "nodemon": "^2.0.19",
+    "rimraf": "^3.0.2",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.1.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^6.0.0",
+    "@nestjs/common": "^8.4.7",
+    "@nestjs/core": "^8.4.7",
+    "@nestjs/mapped-types": "^1.2.0",
+    "@nestjs/platform-fastify": "^8.4.5",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.13.2",
+    "jsonwebtoken": "^8.5.1",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.5.6"
+  }
+}

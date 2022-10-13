@@ -59,6 +59,7 @@ export class AuthController {
     const refreshToken = createRefreshToken(member, keepLogin ? REFRESH_TOKEN_TTL_LONG : REFRESH_TOKEN_TTL);
 
     let accessToken = (await createAccessToken(member, ACCESS_TOKEN_TTL)) ?? '';
+    console.log('accessToken =', accessToken);
     res.setCookie('acc', accessToken, { sameSite: 'none', expires: new Date(Date.now() + ACCESS_TOKEN_TTL * 1000) });
     /* 나중에 멤버 타입에 따라서 expire time을 별도로 설정하는 로직 추가 예정 */
 

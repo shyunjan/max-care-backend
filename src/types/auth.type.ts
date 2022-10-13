@@ -10,7 +10,7 @@ export enum Sex {
  * 9900~10000: 시스템 관리자(administrator)
  **/
 export interface ILoginInfo {
-  id: string;
+  loginId: string;
   email: string;
   userLevel: number;
 }

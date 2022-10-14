@@ -18,6 +18,7 @@ import { FastifyReply } from 'fastify';
 import { login, createRefreshToken, createAccessToken, createMember, getMember, updateMember } from './auth.service';
 import { MemberDto, LoginMemberDto, UpdateMemberDto } from './dto';
 import { SessionType, UserLevel } from 'src/types';
+import { requestContext } from '@fastify/request-context';
 
 const JWT_ENCRYPT_KEY = config.auth.JWT_ENCRYPT_KEY;
 const { TTL: ACCESS_TOKEN_TTL } = config.auth.ACCESS_TOKEN;
@@ -73,17 +74,24 @@ export class AuthController {
     return createMember(memberDto);
   }
 
-  @Get('get')
+  @Get('get-user')
   // getUser(@Query() params: getUserParams): string {
   getUser(
     @Query('id', new DefaultValuePipe(1), new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND }))
     id: number
   ): string {
+    const loginInfo = requestContext.get('loginInfo');
+    const isLoggedIn = requestContext.get('isLoggedIn');
+    const isAdmin = requestContext.get('isAdmin');
+    console.log('loginInfo =', loginInfo);
+    console.log('isLoggedIn =', isLoggedIn);
+    console.log('isAdmin =', isAdmin);
     return getMember(+id);
   }
 
   @Get('get-users')
   getUsers(@Query('ids', new ParseArrayPipe({ items: Number, separator: ',' })) ids: number[]): string[] {
+    console.log();
     return ids.map((n) => n.toString());
   }
 

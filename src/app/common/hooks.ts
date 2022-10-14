@@ -32,7 +32,7 @@ export default function addFastifyHook(server: FastifyInstance): FastifyInstance
           requestContext.set('isAdmin', loginInfo.userLevel >= UserLevel.operator);
         } else throw new Error('No access token');
 
-        done();
+        // done();
       });
       if (checkAdminAuthUrl.some((u) => url.includes(u))) {
         preValidationHooker.push(async (request, reply, done) => {

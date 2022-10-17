@@ -1,7 +1,10 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { FastifyInstance, RouteOptions, preValidationHookHandler } from 'fastify';
 import { requestContext } from '@fastify/request-context';
 import { verifyAccessToken } from '../auth/auth.service';
 import { ILoginInfo, UserLevel } from 'src/types';
+import { RESULT_CODE } from '../../constant';
+import CustomError from './error/CustomError';
 
 const checkAdminAuthUrl: string[] = [
   // 어드민 권한이 필요한 API Url List
@@ -30,7 +33,11 @@ export default function addFastifyHook(server: FastifyInstance): FastifyInstance
           requestContext.set('loginInfo', loginInfo);
           requestContext.set('isLoggedIn', true);
           requestContext.set('isAdmin', loginInfo.userLevel >= UserLevel.operator);
-        } else throw new Error('No access token');
+        } else
+          throw new CustomError(RESULT_CODE.AUTH_NEED_LOGIN, {
+            status: new UnauthorizedException().getStatus(),
+          });
+        // } else throw new UnauthorizedException();
 
         // done();
       });

@@ -1,5 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import fastifyCookie from '@fastify/cookie';
 import { fastifyRequestContextPlugin } from '@fastify/request-context';
@@ -7,6 +7,7 @@ import { defaultValidationOptions } from './init';
 import config from 'src/config/configuration';
 import addFastifyHooks from './app/common/hooks';
 import HttpAppModule from './app/http-app.module';
+import AllExceptionsFilter from './app/common/error/AllExceptionsFilter';
 // import { appendFile } from 'fs';
 
 async function bootstrapHttpApp() {
@@ -23,6 +24,7 @@ async function bootstrapHttpApp() {
   await httpApp.register(fastifyRequestContextPlugin);
 
   httpApp.useGlobalPipes(new ValidationPipe(defaultValidationOptions));
+  httpApp.useGlobalFilters(new AllExceptionsFilter(httpApp.get(HttpAdapterHost)));
 
   // await app.listen(3000, '0.0.0.0');
   await httpApp.listen(3000);

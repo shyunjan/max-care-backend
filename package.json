@@ -29,7 +29,7 @@
   "devDependencies": {
     "@nestjs/cli": "^9.1.4",
     "@types/jsonwebtoken": "^8.5.9",
-    "@types/node": "file:../../../../usr/local/lib/node_modules/@types/node",
+    "@types/node": "^18.11.0",
     "nodemon": "^2.0.19",
     "rimraf": "^3.0.2",
     "ts-node": "^10.9.1",

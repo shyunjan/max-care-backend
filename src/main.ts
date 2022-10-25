@@ -8,7 +8,6 @@ import config from 'src/config/configuration';
 import addFastifyHooks from './app/common/hooks';
 import HttpAppModule from './app/http-app.module';
 import AllExceptionsFilter from './app/common/error/AllExceptionsFilter';
-// import { appendFile } from 'fs';
 
 async function bootstrapHttpApp() {
   const fastifyAdapter = new FastifyAdapter();
@@ -16,7 +15,8 @@ async function bootstrapHttpApp() {
 
   const httpApp: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
     HttpAppModule,
-    fastifyAdapter
+    fastifyAdapter,
+    { logger: ['error', 'warn', 'debug', 'log'] }
     // { cors: true }
   );
   // httpApp.enableCors();

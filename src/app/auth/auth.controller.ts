@@ -36,7 +36,7 @@ const { TTL: REFRESH_TOKEN_TTL, TTL_LONG: REFRESH_TOKEN_TTL_LONG } = config.auth
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
   // constructor(private readonly authService: AuthService) {}
-  // constructor(@Inject(Logger) private readonly logger: Logger) {}
+  // constructor(@Inject(AppLogger) private readonly logger: Logger) {}
 
   @Get('login')
   async loginTester(@Query('loginId') loginId: string): Promise<SessionType | string> {

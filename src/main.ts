@@ -3,13 +3,14 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 import fastifyCookie from '@fastify/cookie';
 import { fastifyRequestContextPlugin } from '@fastify/request-context';
-import { WinstonModule, utilities as nestWinstonUtilities } from 'nest-winston';
-import winston from 'winston';
+// import winston from 'winston';
+// import { WinstonModule, utilities as nestWinstonUtilities } from 'nest-winston';
 import { defaultValidationOptions } from './init';
-import config, { APP_PHASE_PROPERTY } from 'src/config/configuration';
+import config, { APP_PHASE_PROPERTY } from './config/configuration';
 import addFastifyHooks from './app/common/hooks';
 import HttpAppModule from './app/http-app.module';
 import AllExceptionsFilter from './app/common/error/AllExceptionsFilter';
+import AppLogger from './app/common/logger/Logger';
 
 async function bootstrapHttpApp() {
   const fastifyAdapter = new FastifyAdapter();
@@ -19,19 +20,20 @@ async function bootstrapHttpApp() {
     HttpAppModule,
     fastifyAdapter,
     {
-      logger: WinstonModule.createLogger({
-        transports: [
-          new winston.transports.Console({
-            level: process.env.NODE_ENV === 'production' ? 'log' : 'debug',
-            // process.env.NODE_ENV === 'production' ? ['error', 'warn', 'log'] : ['error', 'warn', 'log', 'verbose', 'debug'],
-            format: winston.format.combine(
-              // winston.format.timestamp({ format: 'YYYY-MM-dd HH:mm:ss:SSS' }),
-              winston.format.timestamp({ format: 'HH:mm:ss:SSS' }),
-              nestWinstonUtilities.format.nestLike('Max-Care', { prettyPrint: true, colors: true })
-            ),
-          }),
-        ],
-      }),
+      // logger: WinstonModule.createLogger({
+      //   transports: [
+      //     new winston.transports.Console({
+      //       level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+      //       // process.env.NODE_ENV === 'production' ? ['error', 'warn', 'log'] : ['error', 'warn', 'log', 'verbose', 'debug'],
+      //       format: winston.format.combine(
+      //         // winston.format.timestamp({ format: 'YYYY-MM-dd HH:mm:ss:SSS' }),
+      //         winston.format.timestamp({ format: 'HH:mm:ss:SSS' }),
+      //         nestWinstonUtilities.format.nestLike('Max-Care', { prettyPrint: true, colors: true })
+      //       ),
+      //     }),
+      //   ],
+      // }),
+      logger: new AppLogger(),
     }
     // { cors: true }
   );

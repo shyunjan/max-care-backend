@@ -1,3 +1,3 @@
-# max-care
+# max-care-backend
 
-Cafe cleaning service by ITECH + MAX_CARE company
+Cafe cleaning service backend powered by ITECH + MAX_CARE company

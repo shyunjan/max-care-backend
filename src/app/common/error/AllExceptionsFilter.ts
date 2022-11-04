@@ -1,12 +1,19 @@
-import { ArgumentsHost, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { RESULT_CODE } from '../../../constant';
 import CustomError from './CustomError';
 
 export default class AllExceptionsFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+  private readonly logger = new Logger(this.constructor.name);
 
   catch(exception: unknown, host: ArgumentsHost) {
+    if (exception instanceof CustomError) {
+      this.logger.error(exception.message, exception.stack, exception.context);
+    } else if (exception instanceof Error) {
+      this.logger.error(exception.message, exception.stack);
+    }
+
     const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
 

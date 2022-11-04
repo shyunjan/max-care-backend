@@ -13,6 +13,7 @@ export default class CustomError extends Error {
   message: string;
   data?: any;
   logging: boolean;
+  context?: string;
 
   constructor(code: number, option: CustomErrorOption = {}) {
     /* 에러코드의 이름을 조회 */
@@ -26,6 +27,7 @@ export default class CustomError extends Error {
     this.data = option.data;
     this.logging = option.logging || true;
     this.status = option.status || 400;
+    this.context = option.context;
   }
 }
 
@@ -33,4 +35,5 @@ interface CustomErrorOption {
   status?: number;
   data?: any;
   logging?: boolean;
+  context?: string;
 }

@@ -1,5 +1,5 @@
 import { LoggerService } from '@nestjs/common';
-import { logger, createLogger } from './winston-logger';
+import { logger, createLogger } from './winstonLogger';
 
 export default class AppLogger implements LoggerService {
   constructor() {
@@ -7,8 +7,8 @@ export default class AppLogger implements LoggerService {
   }
 
   // error(message: any, ...optionalParams: any[]) {
-  error(message: string, trace: string, context?: string) {
-    logger.error(message, { from: context, stack: trace });
+  error(message: string, stack?: string, context?: string) {
+    logger.error(message, { from: context, stack });
   }
 
   // warn(message: any, ...optionalParams: any[]) {

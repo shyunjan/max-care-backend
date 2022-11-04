@@ -1,10 +1,14 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException, Logger } from '@nestjs/common';
 import { FastifyInstance, RouteOptions, preValidationHookHandler } from 'fastify';
 import { requestContext } from '@fastify/request-context';
 import { verifyAccessToken } from '../auth/auth.service';
 import { ILoginInfo, UserLevel } from 'src/types';
 import { RESULT_CODE } from '../../constant';
 import CustomError from './error/CustomError';
+import { getModuleFileName } from './util/commonUtil';
+
+const moduleFileName = getModuleFileName(__filename);
+const logger = new Logger(moduleFileName);
 
 const checkAdminAuthUrl: string[] = [
   // 어드민 권한이 필요한 API Url List
@@ -22,29 +26,30 @@ export default function addFastifyHook(server: FastifyInstance): FastifyInstance
 
     if (checkLoginAuthUrl.some((u) => url.includes(u))) {
       preValidationHooker.push(async (request, reply, done) => {
-        console.log('Hooking preValidation for Login Authorization...');
+        logger.debug('Hooking preValidation for Login Authorization...');
         const accessToken: string | undefined = request.cookies['acc'];
         if (accessToken) {
           const loginInfo: ILoginInfo = await verifyAccessToken(accessToken);
-          // ctx.state.loginInfo = loginInfo;
-          // ctx.state.isLoggedIn = true;
-          // ctx.state.isAdmin = loginInfo.mbType === MEMBER.TYPE.ADMIN;
-
           requestContext.set('loginInfo', loginInfo);
           requestContext.set('isLoggedIn', true);
           requestContext.set('isAdmin', loginInfo.userLevel >= UserLevel.operator);
-        } else
+        } else {
           throw new CustomError(RESULT_CODE.AUTH_NEED_LOGIN, {
             status: new UnauthorizedException().getStatus(),
+            context: moduleFileName,
           });
+        }
         // } else throw new UnauthorizedException();
 
         // done();
       });
       if (checkAdminAuthUrl.some((u) => url.includes(u))) {
         preValidationHooker.push(async (request, reply, done) => {
-          console.log('Hooking preValidation for Admin Authorization...');
-          done();
+          logger.debug('Hooking preValidation for Admin Authorization...');
+
+          /* 구현 예정 */
+
+          // done();
         });
       }
     }

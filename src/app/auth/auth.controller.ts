@@ -34,7 +34,7 @@ const { TTL: REFRESH_TOKEN_TTL, TTL_LONG: REFRESH_TOKEN_TTL_LONG } = config.auth
 
 @Controller('auth')
 export class AuthController {
-  private readonly logger = new Logger(AuthController.name);
+  private readonly logger = new Logger(this.constructor.name);
   // constructor(private readonly authService: AuthService) {}
   // constructor(@Inject(AppLogger) private readonly logger: Logger) {}
 
@@ -44,6 +44,7 @@ export class AuthController {
     // const result = await this.authService.loginCache(loginData);
     // return JSON.stringify(loginData) ?? 'Exception';
     this.logger.debug('test logging...');
+    this.logger.error('test error...');
     return login(loginData);
   }
 

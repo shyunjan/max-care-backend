@@ -44,7 +44,6 @@ export class AuthController {
     // const result = await this.authService.loginCache(loginData);
     // return JSON.stringify(loginData) ?? 'Exception';
     this.logger.debug('test logging...');
-    this.logger.error('test error...');
     return login(loginData);
   }
 

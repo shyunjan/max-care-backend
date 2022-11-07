@@ -1,4 +1,15 @@
-import { IsDefined, IsOptional, IsEmail, IsInt, Min, Max, IsNotEmpty, Length, Allow, IsEnum, IsBoolean } from 'class-validator';
+import {
+  IsDefined,
+  IsEmail,
+  IsInt,
+  Min,
+  Max,
+  IsNotEmpty,
+  Length,
+  Allow,
+  IsEnum,
+  IsBoolean,
+} from 'class-validator';
 import { Sex, UserLevel } from 'src/types';
 
 export class MemberDto {

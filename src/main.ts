@@ -49,8 +49,8 @@ async function bootstrapHttpApp() {
   httpApp.useGlobalFilters(new AllExceptionsFilter(httpApp.get(HttpAdapterHost)));
   // httpApp.useLogger(httpApp.get(WINSTON_MODULE_NEST_PROVIDER));
 
-  // await app.listen(3000, '0.0.0.0');
-  await httpApp.listen(3000);
+  await httpApp.listen(3000, '0.0.0.0');
+  // await httpApp.listen(3000);
 }
 
 bootstrapHttpApp();

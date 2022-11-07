@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 // import { Cache } from 'cache-manager';
 import config from 'src/config/configuration';
 import { MemberDto, LoginMemberDto, UpdateMemberDto } from './dto';
@@ -25,7 +24,9 @@ let cnt: number = 0;
 export function login(loginData: LoginMemberDto): string {
   // ++this.cnt;
   ++cnt;
-  return `This user's data is ${JSON.stringify(loginData)}: \n` + `Login OK! your request count = ${cnt}`;
+  return (
+    `This user's data is ${JSON.stringify(loginData)}: \n` + `Login OK! your request count = ${cnt}`
+  );
 }
 
 export async function createAccessToken(member: MemberDto, ttl = ACCESS_TOKEN_TTL) {
@@ -88,6 +89,10 @@ export function getMember(id: number): string {
 }
 
 export function updateMember(id: number, memberDto: UpdateMemberDto): string {
-  return `This user ID is #${id}: \n` + `memberDto = ${JSON.stringify(memberDto)}\n` + `Updating the Member is SUCCESS!`;
+  return (
+    `This user ID is #${id}: \n` +
+    `memberDto = ${JSON.stringify(memberDto)}\n` +
+    `Updating the Member is SUCCESS!`
+  );
 }
 // }

@@ -27,8 +27,9 @@
 name: Deploy to Amazon ECS
 
 on:
-  push:
-    branches: [ "main" ]
+  push: 
+    tags: [ "release-*" ]  
+    # branches: [ "main" ]
 
 env:
   AWS_REGION: "ap-northeast-2"          

@@ -13,6 +13,7 @@ import AllExceptionsFilter from './app/common/error/AllExceptionsFilter';
 import AppLogger from './app/common/logger/Logger';
 import { getModuleFileName } from './app/common/util/commonUtil';
 import { SuccessInterceptor } from './interceptors/sucess.interceptor';
+import { UndefinedToNullInterceptor } from './interceptors/undefinedToNull.interceptor';
 
 async function bootstrapHttpApp() {
   const fastifyAdapter = new FastifyAdapter();
@@ -49,7 +50,7 @@ async function bootstrapHttpApp() {
   httpApp.useGlobalPipes(new ValidationPipe(defaultValidationOptions));
   httpApp.useGlobalFilters(new AllExceptionsFilter(httpApp.get(HttpAdapterHost)));
   // httpApp.useLogger(httpApp.get(WINSTON_MODULE_NEST_PROVIDER));
-  httpApp.useGlobalInterceptors(new SuccessInterceptor());
+  httpApp.useGlobalInterceptors(new SuccessInterceptor(), new UndefinedToNullInterceptor());
 
   await httpApp.listen(80, '0.0.0.0');
   // await httpApp.listen(3000);

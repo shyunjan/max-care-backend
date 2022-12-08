@@ -3,7 +3,7 @@ export default {
   JWT_ENCRYPT_KEY: 'jwt',
   ACCESS_TOKEN: {
     SECRET: 'eb54ce47916cb3c364681b74188344dg',
-    TTL: 60 * 30,
+    TTL: 60 * 1,
   },
   REFRESH_TOKEN: {
     TTL: 3600 * 12,

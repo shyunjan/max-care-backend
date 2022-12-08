@@ -2,6 +2,7 @@ import { ArgumentsHost, ExceptionFilter, HttpException, HttpStatus, Logger } fro
 import { HttpAdapterHost } from '@nestjs/core';
 import { RESULT_CODE } from '../../../constant';
 import CustomError from './CustomError';
+import { ResponseBodyType } from 'src/types';
 
 export default class AllExceptionsFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
@@ -32,13 +33,14 @@ export default class AllExceptionsFilter implements ExceptionFilter {
       code = RESULT_CODE.UNKNOWN_ERROR;
       statusCode = exception.getStatus();
       message = exception.message;
+      data = exception.getResponse();
     } else {
       code = RESULT_CODE.UNKNOWN_ERROR;
       statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
       message = exception instanceof Error ? exception.message : '';
     }
 
-    const responseBody = {
+    const responseBody: ResponseBodyType = {
       code,
       statusCode,
       timestamp: new Date().toISOString(),

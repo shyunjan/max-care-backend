@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import CommonModule from './common/common.module';
 // import configuration, { APP_PHASE } from 'src/config/configuration';
 // import { InitiateSystemController } from '../init';
+import UsersModule from './users/users.module';
 import AuthModule from './auth/auth.module';
 
 @Module({
@@ -15,6 +16,7 @@ import AuthModule from './auth/auth.module';
     // }),
     CommonModule,
     AuthModule,
+    UsersModule,
   ],
   // controllers: [InitiateSystemController],
 })

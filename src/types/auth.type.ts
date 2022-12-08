@@ -21,3 +21,7 @@ export interface ILoginInfo {
   email: string;
   userLevel: UserLevel;
 }
+
+export interface TokenSetType {
+  accessToken: string;
+}

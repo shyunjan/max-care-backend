@@ -28,9 +28,6 @@ export class UserDto {
   @Length(2, 255)
   readonly name?: string;
 
-  @IsBoolean()
-  readonly keepLogin?: boolean = false;
-
   /**
    * 0~9: 테스터(tester) 유저,
    * 10~8999: 일반 유저(customer),

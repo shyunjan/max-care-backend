@@ -2,13 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 // import { Cache } from 'cache-manager';
 import config from 'src/config/configuration';
 import { MemberDto, UpdateMemberDto } from './dto';
-import { ILoginInfo, TokenSetType } from 'src/types';
+import { ILoginUser, TokenSetType } from 'src/types';
 import { createHash, aesEncrypt } from 'src/app/common/util/cryptoUtil';
 import { createJwt, decodeJwt, verifyJwt } from './auth.util';
 import { UsersRepository } from '../users/infra/users.repository';
 import { LoginUserDto, UserDto } from '../users/dto';
 import { JwtService } from '@nestjs/jwt';
-import { logger } from '../common/logger/winstonLogger';
 import CustomError from '../common/error/CustomError';
 import { RESULT_CODE } from '../../constant';
 
@@ -34,18 +33,14 @@ export class AuthService {
   async login(loginData: LoginUserDto): Promise<TokenSetType> {
     const user = await this.validateUser(loginData.loginId, loginData.password);
     if (user) {
-      const payload: ILoginInfo = {
-        loginId: user.loginId,
-        email: user.email!,
-        userLevel: user.userLevel,
-      };
+      const payload: ILoginUser = user;
       const accessToken = this.jwtService.sign(payload);
       return { accessToken };
     } else throw new CustomError(RESULT_CODE.AUTH_NEED_LOGIN);
   }
 
   async validateUser(id: string, password: string): Promise<UserDto | null> {
-    const user = await this.userRepository.findUser(id);
+    const user = await this.userRepository.getUser(id);
     if (user && user.password === password) return user;
     return null;
   }
@@ -61,10 +56,10 @@ export class AuthService {
     return createHash(`${loginId}${ACCESS_TOKEN_SECRET}`);
   }
 
-  verifyAccessToken(accessToken: string): Promise<ILoginInfo> {
-    const payload = decodeJwt(accessToken) as ILoginInfo;
+  verifyAccessToken(accessToken: string): Promise<ILoginUser> {
+    const payload = decodeJwt(accessToken) as ILoginUser;
     const secret = this.createAccessTokenSecret(payload.loginId);
-    return verifyJwt(accessToken, secret) as Promise<ILoginInfo>;
+    return verifyJwt(accessToken, secret) as Promise<ILoginUser>;
   }
 
   createRefreshTokenSecret(member: MemberDto) {
@@ -103,10 +98,6 @@ export class AuthService {
 
   createMember(member: MemberDto): string {
     return `memberDto = ${JSON.stringify(member)}\nCreating the Member is SUCCESS!`;
-  }
-
-  getMember(id: number): string {
-    return `This user ID is #${id}.`;
   }
 
   updateMember(id: number, memberDto: UpdateMemberDto): string {

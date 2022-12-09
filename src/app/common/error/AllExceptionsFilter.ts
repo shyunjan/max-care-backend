@@ -11,7 +11,7 @@ export default class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     if (exception instanceof CustomError) {
       this.logger.error(exception.message, exception.stack, exception.context);
-    } else if (exception instanceof Error) {
+    } else if (exception instanceof HttpException || exception instanceof Error) {
       this.logger.error(exception.message, exception.stack);
     }
 

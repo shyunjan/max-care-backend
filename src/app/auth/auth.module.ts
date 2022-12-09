@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import CommonModule from '../common/common.module';
 import UsersModule from '../users/users.module';
 import { AuthService } from './auth.service';
+import JwtStrategy from './infra/jwt.strategy';
 
 const { SECRET: ACCESS_TOKEN_SECRET, TTL: ACCESS_TOKEN_TTL } = config.auth.ACCESS_TOKEN;
 
@@ -24,7 +25,7 @@ const { SECRET: ACCESS_TOKEN_SECRET, TTL: ACCESS_TOKEN_TTL } = config.auth.ACCES
   /* CacheInterceptor는 response data를 caching한다. 단, GET endpoint reponse data만 캐싱되며, 
      native HTTP adapter(express, fastify)의 response object도 캐싱되지 않는다. */
   // providers: [AuthService, { provide: APP_INTERCEPTOR, useClass: CacheInterceptor }],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
   // exports: [AuthService],
 })
 export default class AuthModule {}

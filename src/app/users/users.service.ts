@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
-import UpdateUserDto from './dto/updateUser.dto';
+import { ResponseUserDto, UpdateUserDto } from './dto';
 import { UsersRepository } from './infra/users.repository';
 
 @Injectable()
@@ -11,12 +11,12 @@ export class UsersService {
     return 'This action adds a new user';
   }
 
-  findUsers() {
-    return `This action returns all users`;
+  async getUser(id: string): Promise<ResponseUserDto | null> {
+    return this.userRepository.getUser(id);
   }
 
-  findUser(id: number) {
-    return `This action returns a #${id} user`;
+  getUsers() {
+    return `This action returns all users`;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

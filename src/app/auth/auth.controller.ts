@@ -9,25 +9,22 @@ import {
   Res,
   Query,
   ParseIntPipe,
-  DefaultValuePipe,
-  ParseArrayPipe,
   Logger,
 } from '@nestjs/common';
 import config from 'src/config/configuration';
 import { FastifyReply } from 'fastify';
 import { AuthService } from './auth.service';
 import { MemberDto, LoginMemberDto, UpdateMemberDto } from './dto';
-import { TokenSetType, SessionType, UserLevel } from 'src/types';
-import { requestContext } from '@fastify/request-context';
-import { LoginUserDto, UserDto } from '../users/dto';
+import { TokenSetType, UserLevel } from 'src/types';
+import { LoginUserDto } from '../users/dto';
 
 const { TTL: ACCESS_TOKEN_TTL } = config.auth.ACCESS_TOKEN;
 const { TTL: REFRESH_TOKEN_TTL, TTL_LONG: REFRESH_TOKEN_TTL_LONG } = config.auth.REFRESH_TOKEN;
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
   private readonly logger = new Logger(this.constructor.name);
+  constructor(private readonly authService: AuthService) {}
 
   @Get('login')
   async loginTester(@Query('loginId') loginId: string): Promise<TokenSetType> {
@@ -39,8 +36,19 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body() loginData: LoginUserDto): Promise<TokenSetType> {
-    return this.authService.login(loginData);
+  async login(
+    @Res({ passthrough: true }) res: FastifyReply,
+    @Body() loginData: LoginUserDto
+  ): Promise<TokenSetType> {
+    const tokens: TokenSetType = await this.authService.login(loginData);
+    if (tokens) {
+      res.setCookie('acc', tokens.accessToken, {
+        sameSite: 'none',
+        path: '/',
+        expires: new Date(Date.now() + ACCESS_TOKEN_TTL * 1000),
+      });
+    }
+    return tokens;
   }
 
   /* 아래는 NestJS를 사용하지 않고 순수하게 `jsonwebtoken` 모듈을 사용하여 JWT를 처리하는 코드이다. */
@@ -88,33 +96,6 @@ export class AuthController {
     res.code(HttpStatus.CREATED);
     // res.header(key: string, value: any);
     return this.authService.createMember(memberDto);
-  }
-
-  @Get('get-user')
-  // getUser(@Query() params: getUserParams): string {
-  getUser(
-    @Query(
-      'id',
-      new DefaultValuePipe(1),
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })
-    )
-    id: number
-  ): string {
-    const loginInfo = requestContext.get('loginInfo');
-    const isLoggedIn = requestContext.get('isLoggedIn');
-    const isAdmin = requestContext.get('isAdmin');
-    console.log('loginInfo =', loginInfo);
-    console.log('isLoggedIn =', isLoggedIn);
-    console.log('isAdmin =', isAdmin);
-    return this.authService.getMember(+id);
-  }
-
-  @Get('get-users')
-  getUsers(
-    @Query('ids', new ParseArrayPipe({ items: Number, separator: ',' })) ids: number[]
-  ): string[] {
-    console.log();
-    return ids.map((n) => n.toString());
   }
 
   @Patch('update/:id')

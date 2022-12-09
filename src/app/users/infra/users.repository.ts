@@ -11,7 +11,7 @@ const USER_LIST: UserDto[] = [
 export class UsersRepository {
   private readonly logger = new Logger(this.constructor.name);
 
-  async findUser(id: string): Promise<UserDto | null> {
+  async getUser(id: string): Promise<UserDto | null> {
     return USER_LIST.find((u) => u.loginId === id) ?? null;
   }
 }

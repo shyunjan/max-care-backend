@@ -8,7 +8,6 @@ import {
   Length,
   Allow,
   IsEnum,
-  IsBoolean,
 } from 'class-validator';
 import { Sex, UserLevel } from 'src/types';
 
@@ -22,14 +21,18 @@ export class UserDto {
 
   @IsDefined()
   @IsNotEmpty()
-  readonly password!: string;
+  password!: string;
 
+  @Allow()
+  salt?: string;
+
+  @IsDefined()
   @IsEmail()
   readonly email!: string;
 
-  // @IsOptional()
+  @IsDefined()
   @Length(2, 255)
-  readonly name?: string;
+  readonly name!: string;
 
   /**
    * 0~9: 테스터(tester) 유저,
@@ -53,7 +56,4 @@ export class UserDto {
 
   @Allow() // 적당한 decorator가 없을 때 이걸 사용하면 된다. 아무것도 쓰지 않으면 whitelist에 걸려서 필터링 당하게 된다
   readonly memo?: string;
-
-  @Allow()
-  salt?: string;
 }

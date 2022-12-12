@@ -32,7 +32,7 @@ export class AuthService {
   // }
 
   async login(loginData: LoginUserDto): Promise<TokenSetType> {
-    const user: UserDto | null = await this.validateUser(loginData.loginId, loginData.password);
+    const user: UserDto = await this.validateUser(loginData.loginId, loginData.password);
     if (user) {
       const { password, salt, ...payload } = user;
       const accessToken = this.jwtService.sign(payload);

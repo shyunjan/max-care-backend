@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 // import { Cache } from 'cache-manager';
 import config from 'src/config/configuration';
+import { compare } from 'bcrypt';
 import { MemberDto, UpdateMemberDto } from './dto';
 import { ILoginUser, TokenSetType } from 'src/types';
 import { createHash, aesEncrypt } from 'src/app/common/util/cryptoUtil';
@@ -31,7 +32,7 @@ export class AuthService {
   // }
 
   async login(loginData: LoginUserDto): Promise<TokenSetType> {
-    const user: UserDto | null = await this.validateUser(loginData.loginId, loginData.password);
+    const user: UserDto = await this.validateUser(loginData.loginId, loginData.password);
     if (user) {
       const { password, salt, ...payload } = user;
       const accessToken = this.jwtService.sign(payload);
@@ -39,10 +40,11 @@ export class AuthService {
     } else throw new CustomError(RESULT_CODE.AUTH_NEED_LOGIN);
   }
 
-  async validateUser(loginId: string, password: string): Promise<UserDto | null> {
+  async validateUser(loginId: string, password: string): Promise<UserDto> {
     const user = await this.userRepository.getUserByLoginId(loginId);
-    if (user && user.password === password) return user;
-    return null;
+    if (!user) throw new CustomError(RESULT_CODE.AUTH_INVALID_USER_ID);
+    if (await compare(password, user.password)) return user;
+    else throw new CustomError(RESULT_CODE.AUTH_WRONG_ID_PW);
   }
 
   createAccessToken(member: MemberDto, ttl = ACCESS_TOKEN_TTL) {

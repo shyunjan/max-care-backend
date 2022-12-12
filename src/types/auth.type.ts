@@ -16,8 +16,14 @@ export enum UserLevel {
  * 9000~9899: 운영자(operator),
  * 9900~9999: 시스템 관리자(administrator)
  **/
-export interface ILoginInfo {
+export interface ILoginUser {
   loginId: string;
   email: string;
   userLevel: UserLevel;
+  isLoggedIn?: boolean;
+  isAdmin?: boolean;
+}
+
+export interface TokenSetType {
+  accessToken: string;
 }

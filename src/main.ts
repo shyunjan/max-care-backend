@@ -7,7 +7,7 @@ import { fastifyRequestContextPlugin } from '@fastify/request-context';
 // import { WinstonModule, utilities as nestWinstonUtilities } from 'nest-winston';
 import { defaultValidationOptions } from './init';
 import config, { APP_PHASE_PROPERTY } from './config/configuration';
-import addFastifyHooks from './app/common/hooks';
+// import addFastifyHooks from './app/common/hooks';
 import HttpAppModule from './app/httpApp.module';
 import AllExceptionsFilter from './app/common/error/AllExceptionsFilter';
 import AppLogger from './app/common/logger/Logger';
@@ -17,7 +17,7 @@ import { UndefinedToNullInterceptor } from './interceptors/undefinedToNull.inter
 
 async function bootstrapHttpApp() {
   const fastifyAdapter = new FastifyAdapter();
-  addFastifyHooks(fastifyAdapter.getInstance());
+  // addFastifyHooks(fastifyAdapter.getInstance());
 
   const httpApp: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
     HttpAppModule,

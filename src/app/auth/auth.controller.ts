@@ -9,25 +9,14 @@ import {
   Res,
   Query,
   ParseIntPipe,
-  DefaultValuePipe,
-  ParseArrayPipe,
   Logger,
-  Inject,
 } from '@nestjs/common';
 import config from 'src/config/configuration';
 import { FastifyReply } from 'fastify';
-// import { AuthService } from './auth.service';
-import {
-  login,
-  createRefreshToken,
-  createAccessToken,
-  createMember,
-  getMember,
-  updateMember,
-} from './auth.service';
+import { AuthService } from './auth.service';
 import { MemberDto, LoginMemberDto, UpdateMemberDto } from './dto';
-import { SessionType, UserLevel } from 'src/types';
-import { requestContext } from '@fastify/request-context';
+import { TokenSetType, UserLevel } from 'src/types';
+import { LoginUserDto } from '../users/dto';
 
 const { TTL: ACCESS_TOKEN_TTL } = config.auth.ACCESS_TOKEN;
 const { TTL: REFRESH_TOKEN_TTL, TTL_LONG: REFRESH_TOKEN_TTL_LONG } = config.auth.REFRESH_TOKEN;
@@ -35,23 +24,39 @@ const { TTL: REFRESH_TOKEN_TTL, TTL_LONG: REFRESH_TOKEN_TTL_LONG } = config.auth
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(this.constructor.name);
-  // constructor(private readonly authService: AuthService) {}
-  // constructor(@Inject(AppLogger) private readonly logger: Logger) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Get('login')
-  async loginTester(@Query('loginId') loginId: string): Promise<SessionType | string> {
-    const loginData = new LoginMemberDto(loginId, '^123456@password!');
+  async loginTester(@Query('loginId') loginId: string): Promise<TokenSetType> {
+    const loginData = new LoginUserDto(loginId, '^123456@password!');
     // const result = await this.authService.loginCache(loginData);
     // return JSON.stringify(loginData) ?? 'Exception';
     this.logger.debug('test logging...');
-    return login(loginData);
+    return this.authService.login(loginData);
   }
 
   @Post('login')
   async login(
     @Res({ passthrough: true }) res: FastifyReply,
+    @Body() loginData: LoginUserDto
+  ): Promise<TokenSetType> {
+    const tokens: TokenSetType = await this.authService.login(loginData);
+    if (tokens) {
+      res.setCookie('acc', tokens.accessToken, {
+        sameSite: 'none',
+        path: '/',
+        expires: new Date(Date.now() + ACCESS_TOKEN_TTL * 1000),
+      });
+    }
+    return tokens;
+  }
+
+  /* 아래는 NestJS를 사용하지 않고 순수하게 `jsonwebtoken` 모듈을 사용하여 JWT를 처리하는 코드이다. */
+  @Post('loginRawJWT')
+  async loginRawJWT(
+    @Res({ passthrough: true }) res: FastifyReply,
     @Body() loginData: LoginMemberDto
-  ): Promise<SessionType | string> {
+  ): Promise<string> {
     const loginId = loginData.loginId;
     const pw = loginData.password;
     const keepLogin = !!loginData.keepLogin;
@@ -70,12 +75,12 @@ export class AuthController {
     // else if (member.mbStatus === MEMBER.STATUS.SUSPENDED) return new CustomError(RESULT_CODE.AUTH_SUSPENDED_ACCOUNT);
     // else if (member.mbStatus === MEMBER.STATUS.WITHDRAWN) return new CustomError(RESULT_CODE.AUTH_WITHDRAWN_ACCOUNT);
 
-    const refreshToken = createRefreshToken(
+    const refreshToken = this.authService.createRefreshToken(
       member,
       keepLogin ? REFRESH_TOKEN_TTL_LONG : REFRESH_TOKEN_TTL
     );
 
-    let accessToken = (await createAccessToken(member, ACCESS_TOKEN_TTL)) ?? '';
+    let accessToken = (await this.authService.createAccessToken(member, ACCESS_TOKEN_TTL)) ?? '';
     res.setCookie('acc', accessToken, {
       sameSite: 'none',
       expires: new Date(Date.now() + ACCESS_TOKEN_TTL * 1000),
@@ -90,34 +95,7 @@ export class AuthController {
   create(@Res({ passthrough: true }) res: FastifyReply, @Body() memberDto: MemberDto): string {
     res.code(HttpStatus.CREATED);
     // res.header(key: string, value: any);
-    return createMember(memberDto);
-  }
-
-  @Get('get-user')
-  // getUser(@Query() params: getUserParams): string {
-  getUser(
-    @Query(
-      'id',
-      new DefaultValuePipe(1),
-      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_FOUND })
-    )
-    id: number
-  ): string {
-    const loginInfo = requestContext.get('loginInfo');
-    const isLoggedIn = requestContext.get('isLoggedIn');
-    const isAdmin = requestContext.get('isAdmin');
-    console.log('loginInfo =', loginInfo);
-    console.log('isLoggedIn =', isLoggedIn);
-    console.log('isAdmin =', isAdmin);
-    return getMember(+id);
-  }
-
-  @Get('get-users')
-  getUsers(
-    @Query('ids', new ParseArrayPipe({ items: Number, separator: ',' })) ids: number[]
-  ): string[] {
-    console.log();
-    return ids.map((n) => n.toString());
+    return this.authService.createMember(memberDto);
   }
 
   @Patch('update/:id')
@@ -131,6 +109,6 @@ export class AuthController {
     @Body() memberDto: UpdateMemberDto
   ) {
     // console.log("typeof id === 'number' =", typeof id === 'number');
-    return updateMember(id, memberDto);
+    return this.authService.updateMember(id, memberDto);
   }
 }

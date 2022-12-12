@@ -40,7 +40,8 @@ export class UsersController {
     id: number
   ): Promise<ResponseUserDto | null> {
     const loginUser: ILoginUser = requestContext.get('loginUser');
-    return this.usersService.getUser(loginUser.loginId);
+    this.logger.verbose(`loginUser = ${JSON.stringify(loginUser)}`);
+    return this.usersService.getUser(id);
   }
 
   @Get('get-users')

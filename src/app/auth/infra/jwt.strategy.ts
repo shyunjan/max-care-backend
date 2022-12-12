@@ -20,7 +20,7 @@ export default class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any): Promise<ILoginUser> {
     const loginUser: ILoginUser = payload;
-    loginUser.isLoggedIn = true;
+    // loginUser.isLoggedIn = true;
     loginUser.isAdmin = loginUser.userLevel >= UserLevel.operator;
 
     requestContext.set('loginUser', loginUser);

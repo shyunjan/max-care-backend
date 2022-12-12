@@ -13,6 +13,9 @@ import {
 import { Sex, UserLevel } from 'src/types';
 
 export class UserDto {
+  @Min(1)
+  id!: number;
+
   @IsDefined() // skipUndefinedProperties나 skipMissingProperties의 영향을 받지 않도록 한다
   @Length(8)
   readonly loginId!: string;

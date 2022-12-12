@@ -31,16 +31,16 @@ export class AuthService {
   // }
 
   async login(loginData: LoginUserDto): Promise<TokenSetType> {
-    const user = await this.validateUser(loginData.loginId, loginData.password);
+    const user: UserDto | null = await this.validateUser(loginData.loginId, loginData.password);
     if (user) {
-      const payload: ILoginUser = user;
+      const { password, salt, ...payload } = user;
       const accessToken = this.jwtService.sign(payload);
       return { accessToken };
     } else throw new CustomError(RESULT_CODE.AUTH_NEED_LOGIN);
   }
 
-  async validateUser(id: string, password: string): Promise<UserDto | null> {
-    const user = await this.userRepository.getUser(id);
+  async validateUser(loginId: string, password: string): Promise<UserDto | null> {
+    const user = await this.userRepository.getUserByLoginId(loginId);
     if (user && user.password === password) return user;
     return null;
   }

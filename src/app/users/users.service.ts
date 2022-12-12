@@ -11,8 +11,13 @@ export class UsersService {
     return 'This action adds a new user';
   }
 
-  async getUser(id: string): Promise<ResponseUserDto | null> {
-    return this.userRepository.getUser(id);
+  async getUser(id: number): Promise<ResponseUserDto | null> {
+    const result = await this.userRepository.getUser(id);
+    if (result) {
+      const { password, salt, ...user } = result;
+      return user;
+    }
+    return null;
   }
 
   getUsers() {

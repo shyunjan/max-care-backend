@@ -34,10 +34,7 @@ export class AuthService {
     const user: UserDto | null = await this.validateUser(loginData.loginId, loginData.password);
     if (user) {
       const { password, salt, ...payload } = user;
-      const accessToken = this.jwtService.sign(payload, {
-        secret: ACCESS_TOKEN_SECRET,
-        expiresIn: REFRESH_TOKEN_TTL,
-      });
+      const accessToken = this.jwtService.sign(payload);
       return { accessToken };
     } else throw new CustomError(RESULT_CODE.AUTH_NEED_LOGIN);
   }

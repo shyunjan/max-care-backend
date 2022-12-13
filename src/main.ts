@@ -5,7 +5,7 @@ import fastifyCookie from '@fastify/cookie';
 import { fastifyRequestContextPlugin } from '@fastify/request-context';
 // import winston from 'winston';
 // import { WinstonModule, utilities as nestWinstonUtilities } from 'nest-winston';
-import { defaultValidationOptions } from './init';
+import { defaultValidationOptions } from '@init';
 import config, { APP_PHASE_PROPERTY } from './config/configuration';
 // import addFastifyHooks from './app/common/hooks';
 import HttpAppModule from './app/httpApp.module';

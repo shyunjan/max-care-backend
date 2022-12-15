@@ -15,6 +15,7 @@
     "build": "npm run build:nest",
     "build:tsc": "rimraf dist && tsc",
     "build:nest": "rimraf dist && nest build",
+    "eslint": "eslint \"./src/**/*.ts\" && tsc --noemit",
     "test": "NODE_ENV=test jest"
   },
   "repository": {
@@ -33,7 +34,15 @@
     "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^18.11.0",
     "@types/passport-jwt": "^3.0.7",
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
+    "eslint": "^8.29.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^4.3.8",
+    "lint-staged": "^13.1.0",
     "nodemon": "^2.0.19",
+    "prettier-eslint": "^15.0.1",
     "rimraf": "^3.0.2",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.0",
@@ -58,5 +67,15 @@
     "rxjs": "^7.5.6",
     "winston": "^3.8.2",
     "winston-daily-rotate-file": "^4.7.1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,ts,json,css,scss,md}": [
+      "eslint"
+    ]
   }
 }

@@ -5,9 +5,10 @@ import fastifyCookie from '@fastify/cookie';
 import { fastifyRequestContextPlugin } from '@fastify/request-context';
 // import winston from 'winston';
 // import { WinstonModule, utilities as nestWinstonUtilities } from 'nest-winston';
-import { defaultValidationOptions } from './init';
+import { defaultValidationOptions } from '@init';
 import config, { APP_PHASE_PROPERTY } from './config/configuration';
-// import addFastifyHooks from './app/common/hooks';
+// import addFastifyHooks from './hooks/auth.hooks';
+import addLoggerHook from './hooks/logger.hooks';
 import HttpAppModule from './app/httpApp.module';
 import AllExceptionsFilter from './app/common/error/AllExceptionsFilter';
 import AppLogger from './app/common/logger/Logger';
@@ -17,7 +18,7 @@ import { UndefinedToNullInterceptor } from './interceptors/undefinedToNull.inter
 
 async function bootstrapHttpApp() {
   const fastifyAdapter = new FastifyAdapter();
-  // addFastifyHooks(fastifyAdapter.getInstance());
+  addLoggerHook(fastifyAdapter.getInstance());
 
   const httpApp: NestFastifyApplication = await NestFactory.create<NestFastifyApplication>(
     HttpAppModule,

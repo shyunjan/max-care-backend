@@ -23,7 +23,7 @@ const createLogger = () => {
   }
 
   logger = winston.createLogger({
-    level: process.env.NODE_ENV === 'production' ? 'verbose' : 'debug',
+    level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
     format: combine(
       errors({ stack: true }),
       timestamp({ format: 'YYYY-MM-dd HH:mm:ss:SSS' })
@@ -63,21 +63,20 @@ const createLogger = () => {
         ),
       })
     );
-
-    /* Production phase일 경우는 파일로 로그를 저장. AWS일 경우는 파일이나 컬러가 필요없으므로 수정 요망. */
   } else {
+    /* Production phase: AWS 서버용 */
     logger.add(
       new winston.transports.Console({
         format: combine(
-          label({ label: 'Max-Care' }),
           printf(
             (info: { level: string; message: any; [key: string]: string }) =>
-              `[${info.label}] ${info.level} ${info.timestamp} [${info.from}] ${info.message}`
+              `${info.level} [${info.from}] ${info.message}`
           )
         ),
       })
     );
 
+    /* Production phase: On-Premise 서버용으로 파일로 로그를 저장 */
     // const fileLogFormat = combine(
     //   uncolorize(),
     //   printf(({ level, message, timestamp, from }) => `${level} ${timestamp} [${from}] ${message}`)
